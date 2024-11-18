@@ -39,68 +39,116 @@ int main(){
     return 0;
 }
 #include<stdio.h>
-#include<stdlib.h>
-#include<limits.h>
-#include<stdbool.h>
-#define M 5
-int adj[M][M];
-int vis[M] = {0};
+#define M 10
+
+int adjM[M][M];
+int visited[M] = {0};
 int parent[M];
 int rank[M];
-int find(int i){
-    if(parent[i] == i){
+
+int find(int i)
+{
+    if(parent[i] == i)
+    {
         return i;
     }
+    
     parent[i] = find(parent[i]);
     return parent[i];
 }
-void union_sets(int x, int y){
+
+void union_sets(int x, int y)
+{
     int r1 = find(x);
     int r2 = find(y);
-    if(r1 != r2){
-        if(rank[r1] > rank[r2]) parent[r2] = r1;
-        else if(rank[r1] < rank[r2]) parent[r1] = r2;
+    
+    if(r1 != r2)
+    {
+        if(rank[r1] > rank[r2])
+        {
+            parent[r2] = r1;
+        }
+        
+        else if(rank[r1] < rank[r2])
+        {
+            parent[r1] = r2;
+        }
+        
         else{
             parent[r2] = r1;
             rank[r1]++;
         }
     }
 }
-int main(){ 
+
+int main()
+{
     int v;
-    scanf("%d",&v);
+    scanf("%d", &v);
+    
     int arr1[100][3];
     int e = 0;
-    for(int i = 0;i<v;i++){
+    
+    for(int i=0; i<v; i++)
+    {
         parent[i] = i;
         rank[i] = 0;
     }
-    //read the adjacency matrix
-    for(int i = 0;i<v;i++){
-        for(int j = i + 1;j<v;j++){
-            if(adj[i][j] != 0){
+    
+    for(int i=0; i<v; i++)
+    {
+        for(int j=0; j<v; j++)
+        {
+            scanf("%d", &adjM[i][j]);
+        }
+    }
+    
+    for(int i=0; i<v; i++)
+    {
+        for(int j=i+1; j<v; j++)
+        {
+            if(adjM[i][j] != 0)
+            {
                 arr1[e][0] = i;
                 arr1[e][1] = j;
-                arr1[e][2] = adj[i][j];
+                arr1[e][2] = adjM[i][j];
                 e++;
             }
         }
     }
-    for(int i = 0;i<e-1;i++){
-        for(int j = i + 1;j<e-1-i;j++){
-            if(arr1[i][2] > arr1[j+1][2])
+    
+    for(int i=0; i<e-1; i++)
+    {
+        for(int j=0; j<e-1-i; j++)
+        {
+            if(arr1[j][2] > arr1[j+1][2])
+            {
+                int temp[3];
+                for(int z=0; z<3; z++)
+                {
+                    temp[z] = arr1[j][z];
+                    arr1[j][z] = arr1[j+1][z];
+                    arr1[j+1][z] = temp[z];
+                }
+            }
         }
     }
-    for(int i = 0;i<e;i++){
+    
+    for(int i=0; i<e; i++)
+    {
         int u1 = arr1[i][0];
         int u2 = arr1[i][1];
         int u3 = arr1[i][2];
-        if(find(u1) != find(u2)){
-            vis[u1] = 1;
-            vis[u2] = 1;
-            union_sets(u1, u2);
+        if(find(u1) != find(u2))
+        {
+            visited[u1] = 1;
+            visited[u2] = 1;
+            printf("%d -> %d\n", u1+1, u2+1);
+            union_sets(u1,u2);
         }
     }
+    
+    
     return 0;
 }
 #include<stdio.h>
